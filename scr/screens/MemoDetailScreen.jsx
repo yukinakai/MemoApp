@@ -1,5 +1,7 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import {
+  View, Text, StyleSheet, ScrollView,
+} from 'react-native';
 
 import AppBar from '../components/AppBar';
 import CircleButton from '../components/CircleButton';
@@ -21,7 +23,7 @@ export default function MemoDetailScreen() {
           その末国の後この気持はみんな上を起っでかと岡田さんをなりたます、徳義心の結果ですというご講演なまいですから、思想のところが自己に始めまでの同人にほかするてならて、いっその十一月があるとどんなついでをどうも見るませうとします事たて、ないなけれですてそうごがた来るまいのありましん。
         </Text>
       </ScrollView>
-      <CircleButton style={{ top: 160, buttom: 'auto' }}>+</CircleButton>
+      <CircleButton style={{ top: 160, buttom: 'auto' }} name="edit-2" />
     </View>
   );
 }
