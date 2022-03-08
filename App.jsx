@@ -1,7 +1,7 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator, CardStyleInterpolators } from '@react-navigation/stack';
-import firebase from 'firebase';
+import { initializeApp, getApps } from 'firebase/app';
 
 import MemoListScreen from './scr/screens/MemoListScreen';
 import MemoDetailScreen from './scr/screens/MemoDetailScreen';
@@ -22,8 +22,8 @@ const firebaseConfig = {
   measurementId: 'G-CZTV59NB97',
 };
 
-if (firebase.apps.length === 0) {
-  firebase.initializeApp(firebaseConfig);
+if (getApps().length === 0) {
+  initializeApp(firebaseConfig);
 }
 
 export default function App() {
