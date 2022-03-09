@@ -1,14 +1,35 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import {
-  View, Text, TextInput, StyleSheet, TouchableOpacity,
+  View, Text, TextInput, StyleSheet, TouchableOpacity, Alert,
 } from 'react-native';
+import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 
 import Button from '../components/Button';
 
 export default function LoginScreen(props) {
   const { navigation } = props;
   const [email, setEmail] = useState('');
-  const [passwrod, setPassword] = useState('');
+  const [password, setPassword] = useState('');
+
+  const handlePress = useCallback(
+    () => {
+      const auth = getAuth();
+      signInWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+          const { user } = userCredential;
+          console.log(user.uid);
+          navigation.reset({
+            index: 0,
+            routes: [{ name: 'MemoList' }],
+          });
+        })
+        .catch((error) => {
+          console.log(error.code, error.message);
+          Alert.alert(error.code);
+        });
+    },
+  );
+
   return (
     <View style={styles.container}>
       <View style={styles.inner}>
@@ -23,7 +44,7 @@ export default function LoginScreen(props) {
           textContentType="emailAddress"
         />
         <TextInput
-          value={passwrod}
+          value={password}
           style={styles.input}
           onChangeText={(text) => { setPassword(text); }}
           autoCapitalize="none"
@@ -33,12 +54,7 @@ export default function LoginScreen(props) {
         />
         <Button
           label="submit"
-          onPress={() => {
-            navigation.reset({
-              index: 0,
-              routes: [{ name: 'MemoList' }],
-            });
-          }}
+          onPress={handlePress}
         />
         <View style={styles.footer}>
           <Text style={styles.footerText}>Not Register?</Text>
