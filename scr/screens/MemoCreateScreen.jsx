@@ -1,20 +1,51 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   View, TextInput, StyleSheet, KeyboardAvoidingView,
 } from 'react-native';
+import { getAuth } from 'firebase/auth';
+import { getFirestore, collection, addDoc } from 'firebase/firestore';
 
 import CircleButton from '../components/CircleButton';
 
 export default function MemoCreateScreen(props) {
   const { navigation } = props;
+  const [bodyText, setBodyText] = useState('');
+
+  function handlePress() {
+    const { currentUser } = getAuth();
+    const db = getFirestore();
+    addDoc(collection(db, `users/${currentUser.uid}/memos`), {
+      bodyText, // bodyText: bodyTextは省略できる
+      updated_at: new Date(),
+    })
+      .then((docRef) => {
+        console.log('Created!', docRef.id);
+        navigation.goBack();
+      })
+      .catch((error) => {
+        console.log('Error!', error);
+      });
+  }
+
   return (
-    <KeyboardAvoidingView style={styles.container} behavior="height">
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior="height"
+      keyboardVerticalOffset={80}
+    >
       <View style={styles.inputContainer}>
-        <TextInput value="" multiline style={styles.input} />
+        <TextInput
+          value={bodyText}
+          multiline
+          style={styles.input}
+          onChangeText={(text) => { setBodyText(text); }}
+          autoFocus
+        />
       </View>
       <CircleButton
         name="check"
-        onPress={() => { navigation.goBack(); }}
+        // eslint-disable-next-line react/jsx-no-bind
+        onPress={handlePress}
       />
     </KeyboardAvoidingView>
   );

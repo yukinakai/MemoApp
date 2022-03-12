@@ -12,11 +12,13 @@ import SignUpScreen from './scr/screens/SignUpScreen';
 
 import { firebaseConfig } from './env';
 
-const Stack = createStackNavigator();
+// require('firebase/firestore');
 
 if (getApps().length === 0) {
   initializeApp(firebaseConfig);
 }
+
+const Stack = createStackNavigator();
 
 export default function App() {
   return (
