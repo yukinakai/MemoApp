@@ -16,7 +16,7 @@ export default function MemoCreateScreen(props) {
     const db = getFirestore();
     addDoc(collection(db, `users/${currentUser.uid}/memos`), {
       bodyText, // bodyText: bodyTextは省略できる
-      updated_at: new Date(),
+      updatedAt: new Date(),
     })
       .then((docRef) => {
         console.log('Created!', docRef.id);

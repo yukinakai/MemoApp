@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, Alert } from 'react-native';
 import { getAuth } from 'firebase/auth';
 import {
@@ -11,6 +11,7 @@ import LogOutButton from '../components/LogOutButton';
 
 export default function MemoListScreen(props) {
   const { navigation } = props;
+  const [memos, setMemos] = useState([]);
 
   useEffect(() => {
     navigation.setOptions({
@@ -25,11 +26,22 @@ export default function MemoListScreen(props) {
     let unsubscribe = () => {};
     if (currentUser) {
       try {
-        const q = query(collection(db, `users/${currentUser.uid}/memos`), orderBy('updated_at', 'desc'));
+        const q = query(collection(db, `users/${currentUser.uid}/memos`), orderBy('updatedAt', 'desc'));
         const snapshot = await getDocs(q);
+        const userMemos = [];
         unsubscribe = snapshot.forEach((doc) => {
+          console.log('fire');
           console.log(doc.id, doc.data());
+          const data = doc.data();
+          userMemos.push({
+            id: doc.id,
+            bodyText: data.bodyText,
+            updatedAt: data.updatedAt.toDate(),
+          });
+          console.log(userMemos);
         });
+        console.log(userMemos);
+        setMemos(userMemos);
       } catch (error) {
         console.log(error);
         Alert.alert('Error!', error);
@@ -40,7 +52,7 @@ export default function MemoListScreen(props) {
 
   return (
     <View style={styles.container}>
-      <MemoList />
+      <MemoList memos={memos} />
       <CircleButton
         name="plus"
         onPress={() => { navigation.navigate('MemoCreate'); }}
