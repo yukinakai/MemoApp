@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, Alert } from 'react-native';
 import { getAuth } from 'firebase/auth';
 import {
-  getFirestore, collection, getDocs, query, orderBy,
+  getFirestore, collection, query, orderBy, onSnapshot,
 } from 'firebase/firestore';
 
 import MemoList from '../components/MemoList';
@@ -27,21 +27,19 @@ export default function MemoListScreen(props) {
     if (currentUser) {
       try {
         const q = query(collection(db, `users/${currentUser.uid}/memos`), orderBy('updatedAt', 'desc'));
-        const snapshot = await getDocs(q);
-        const userMemos = [];
-        unsubscribe = snapshot.forEach((doc) => {
-          console.log('fire');
-          console.log(doc.id, doc.data());
-          const data = doc.data();
-          userMemos.push({
-            id: doc.id,
-            bodyText: data.bodyText,
-            updatedAt: data.updatedAt.toDate(),
+        unsubscribe = onSnapshot(q, (querySnapshot) =>{
+          const userMemos = [];
+          querySnapshot.forEach((doc) => {
+            console.log(doc.id, doc.data());
+            const data = doc.data();
+            userMemos.push({
+              id: doc.id,
+              bodyText: data.bodyText,
+              updatedAt: data.updatedAt.toDate(),
+            });
           });
-          console.log(userMemos);
+          setMemos(userMemos);
         });
-        console.log(userMemos);
-        setMemos(userMemos);
       } catch (error) {
         console.log(error);
         Alert.alert('Error!', error);
