@@ -27,7 +27,7 @@ export default function MemoListScreen(props) {
     if (currentUser) {
       try {
         const q = query(collection(db, `users/${currentUser.uid}/memos`), orderBy('updatedAt', 'desc'));
-        unsubscribe = onSnapshot(q, (querySnapshot) =>{
+        unsubscribe = onSnapshot(q, (querySnapshot) => {
           const userMemos = [];
           querySnapshot.forEach((doc) => {
             console.log(doc.id, doc.data());
