@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  View, Text, StyleSheet, TouchableOpacity, Alert,
+  View, Text, StyleSheet, TouchableOpacity, Alert, FlatList,
 } from 'react-native';
 // import { Feather } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
@@ -13,27 +13,35 @@ import Icon from './icon';
 export default function MemoList(props) {
   const { memos } = props;
   const navigation = useNavigation();
-  return (
-    <View>
-      {memos.map((memo) => (
+
+  function renderItem({ item }) {
+    return (
+      <TouchableOpacity
+        style={styles.memoListItem}
+        onPress={() => { navigation.navigate('MemoDetail'); }}
+      >
+        <View>
+          <Text style={styles.memoListItemTitle} numberOfLines={1}>{item.bodyText}</Text>
+          <Text style={styles.memoListItemDate}>{String(item.updatedAt)}</Text>
+        </View>
         <TouchableOpacity
-          key={memo.id}
-          style={styles.memoListItem}
-          onPress={() => { navigation.navigate('MemoDetail'); }}
+          style={styles.memoDetele}
+          onPress={() => { Alert.alert('Are you sure?'); }}
         >
-          <View>
-            <Text style={styles.memoListItemTitle}>{memo.bodyText}</Text>
-            <Text style={styles.memoListItemDate}>{String(memo.updatedAt)}</Text>
-          </View>
-          <TouchableOpacity
-            style={styles.memoDetele}
-            onPress={() => { Alert.alert('Are you sure?'); }}
-          >
-            <Icon name="delete" size={16} color="#B0B0B0" />
-            {/* <Feather name="x" size={16} color="#B0B0B0" /> */}
-          </TouchableOpacity>
+          <Icon name="delete" size={16} color="#B0B0B0" />
+          {/* <Feather name="x" size={16} color="#B0B0B0" /> */}
         </TouchableOpacity>
-      ))}
+      </TouchableOpacity>
+    );
+  }
+  return (
+    <View style={styles.container}>
+      <FlatList
+        data={memos}
+        // eslint-disable-next-line react/jsx-no-bind
+        renderItem={renderItem}
+        keyExtractor={(item) => item.id}
+      />
     </View>
   );
 }
@@ -47,6 +55,9 @@ MemoList.propTypes = {
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
   memoListItem: {
     backgroundColor: '#ffffff',
     flexDirection: 'row',
