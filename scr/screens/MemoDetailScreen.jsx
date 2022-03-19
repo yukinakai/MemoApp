@@ -1,26 +1,52 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
-  View, Text, StyleSheet, ScrollView,
+  View, Text, StyleSheet, ScrollView, Alert,
 } from 'react-native';
+import { shape, string } from 'prop-types';
+import { getAuth } from 'firebase/auth';
+import {
+  getFirestore, doc, getDoc,
+} from 'firebase/firestore';
 
 import CircleButton from '../components/CircleButton';
+import { dateToString } from '../utils';
 
 export default function MemoDetailScreen(props) {
-  const { navigation } = props;
+  const { navigation, route } = props;
+  const { id } = route.params;
+  console.log(id);
+  const [memo, setMemo] = useState(null);
+
+  useEffect(async () => {
+    const { currentUser } = getAuth();
+    const db = getFirestore();
+    let unsubscribe = () => {};
+    if (currentUser) {
+      try {
+        const docRef = doc(db, `users/${currentUser.uid}/memos`, id);
+        const docSnap = await getDoc(docRef);
+        const data = docSnap.data();
+        console.log(docSnap.id, data.bodyText);
+        unsubscribe = setMemo({
+          id: doc.id,
+          bodyText: data.bodyText,
+          updatedAt: data.updatedAt.toDate(),
+        });
+      } catch (error) {
+        console.log(error);
+        Alert.alart('Error!', error);
+      }
+    }
+    return unsubscribe;
+  }, []);
   return (
     <View style={styles.container}>
       <View style={styles.memoHeader}>
-        <Text style={styles.memoTitle}>買い物リスト</Text>
-        <Text style={styles.memoDate}>2022年02月27日 08:15</Text>
+        <Text style={styles.memoTitle} numberOfLines={1}>{memo && memo.bodyText}</Text>
+        <Text style={styles.memoDate}>{memo && dateToString(memo.updatedAt)}</Text>
       </View>
       <ScrollView style={styles.memoBody}>
-        <Text style={styles.memoText}>
-          あなたは場合ちっともそんな刺戟式という点の時に向いましで。無論ほかへ腐敗人もずっとどんな横着んましほどが集っといるでしには遠慮並べませないので、そうには眺めるなななだ。
-
-          世の中としまし事はいったい今をとにかくませなな。ついに嘉納さんを払底慾そう享有に抱いた道徳そのがた私か買収にというごお話しうたたますので、この今もこれか一間言い方を申し上げて、三宅さんの事を下のこれらで多分ご妨害となさるて私年の同希望が聞えるようにおそらくお助言が云っでしたから、たしかはなはだ存在を引き返したでなりたら事に向いでした。及び及びご釣が云っ方もまだ勝手と得ありて、この実がはぶつかっますてという英文に這入っていけですます。
-
-          その末国の後この気持はみんな上を起っでかと岡田さんをなりたます、徳義心の結果ですというご講演なまいですから、思想のところが自己に始めまでの同人にほかするてならて、いっその十一月があるとどんなついでをどうも見るませうとします事たて、ないなけれですてそうごがた来るまいのありましん。
-        </Text>
+        <Text style={styles.memoText}>{memo && memo.bodyText}</Text>
       </ScrollView>
       <CircleButton
         style={{ top: 60, buttom: 'auto' }}
@@ -30,6 +56,12 @@ export default function MemoDetailScreen(props) {
     </View>
   );
 }
+
+MemoDetailScreen.propTypes = {
+  route: shape({
+    params: shape({ id: string }),
+  }).isRequired,
+};
 
 const styles = StyleSheet.create({
   container: {

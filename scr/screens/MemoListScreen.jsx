@@ -20,7 +20,7 @@ export default function MemoListScreen(props) {
     });
   }, []);
 
-  useEffect(async () => {
+  useEffect(() => {
     const { currentUser } = getAuth();
     const db = getFirestore();
     let unsubscribe = () => {};
@@ -30,7 +30,7 @@ export default function MemoListScreen(props) {
         unsubscribe = onSnapshot(q, (querySnapshot) => {
           const userMemos = [];
           querySnapshot.forEach((doc) => {
-            console.log(doc.id, doc.data());
+            // console.log(doc.id, doc.data());
             const data = doc.data();
             userMemos.push({
               id: doc.id,
