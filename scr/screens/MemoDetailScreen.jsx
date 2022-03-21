@@ -5,7 +5,7 @@ import {
 import { shape, string } from 'prop-types';
 import { getAuth } from 'firebase/auth';
 import {
-  getFirestore, doc, getDoc,
+  getFirestore, doc, onSnapshot,
 } from 'firebase/firestore';
 
 import CircleButton from '../components/CircleButton';
@@ -19,22 +19,22 @@ export default function MemoDetailScreen(props) {
 
   useEffect(async () => {
     const { currentUser } = getAuth();
-    const db = getFirestore();
     let unsubscribe = () => {};
     if (currentUser) {
       try {
-        const docRef = doc(db, `users/${currentUser.uid}/memos`, id);
-        const docSnap = await getDoc(docRef);
-        const data = docSnap.data();
-        console.log(docSnap.id, data.bodyText);
-        unsubscribe = setMemo({
-          id: doc.id,
-          bodyText: data.bodyText,
-          updatedAt: data.updatedAt.toDate(),
+        const db = getFirestore();
+        unsubscribe = onSnapshot(doc(db, `users/${currentUser.uid}/memos`, id), (docSnap) => {
+          const data = docSnap.data();
+          console.log(docSnap.id, data.bodyText);
+          setMemo({
+            id: docSnap.id,
+            bodyText: data.bodyText,
+            updatedAt: data.updatedAt.toDate(),
+          });
         });
       } catch (error) {
         console.log(error);
-        Alert.alart('Error!', error);
+        Alert.alert('Error!', error);
       }
     }
     return unsubscribe;
@@ -51,7 +51,7 @@ export default function MemoDetailScreen(props) {
       <CircleButton
         style={{ top: 60, buttom: 'auto' }}
         name="pencil"
-        onPress={() => { navigation.navigate('MemoEdit'); }}
+        onPress={() => { navigation.navigate('MemoEdit', { id: memo.id, bodyText: memo.bodyText }); }}
       />
     </View>
   );

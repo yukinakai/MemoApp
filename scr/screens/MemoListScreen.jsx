@@ -22,10 +22,10 @@ export default function MemoListScreen(props) {
 
   useEffect(() => {
     const { currentUser } = getAuth();
-    const db = getFirestore();
     let unsubscribe = () => {};
     if (currentUser) {
       try {
+        const db = getFirestore();
         const q = query(collection(db, `users/${currentUser.uid}/memos`), orderBy('updatedAt', 'desc'));
         unsubscribe = onSnapshot(q, (querySnapshot) => {
           const userMemos = [];
