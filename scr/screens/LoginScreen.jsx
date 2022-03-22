@@ -5,12 +5,14 @@ import {
 import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth';
 
 import Button from '../components/Button';
+import Loading from '../components/Loading';
 
 export default function LoginScreen(props) {
   const { navigation } = props;
   const auth = getAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [isloading, setLoading] = useState(true);
 
   useEffect(() => {
     const unsubcribe = onAuthStateChanged(auth, (user) => {
@@ -19,6 +21,8 @@ export default function LoginScreen(props) {
           index: 0,
           routes: [{ name: 'MemoList' }],
         });
+      } else {
+        setLoading(false);
       }
     });
     return unsubcribe;
@@ -26,6 +30,7 @@ export default function LoginScreen(props) {
 
   const handlePress = useCallback(
     () => {
+      setLoading(true);
       signInWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
           const { user } = userCredential;
@@ -38,12 +43,16 @@ export default function LoginScreen(props) {
         .catch((error) => {
           console.log(error.code, error.message);
           Alert.alert(error.code);
+        })
+        .then(() => {
+          setLoading(false);
         });
     },
   );
 
   return (
     <View style={styles.container}>
+      <Loading isloading={isloading} />
       <View style={styles.inner}>
         <Text style={styles.title}>Log In</Text>
         <TextInput
