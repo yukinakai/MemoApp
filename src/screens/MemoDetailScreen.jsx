@@ -9,12 +9,11 @@ import {
 } from 'firebase/firestore';
 
 import CircleButton from '../components/CircleButton';
-import { dateToString } from '../utils';
+import { dateToString, translateErrors } from '../utils';
 
 export default function MemoDetailScreen(props) {
   const { navigation, route } = props;
   const { id } = route.params;
-  console.log(id);
   const [memo, setMemo] = useState(null);
 
   useEffect(async () => {
@@ -25,7 +24,6 @@ export default function MemoDetailScreen(props) {
         const db = getFirestore();
         unsubscribe = onSnapshot(doc(db, `users/${currentUser.uid}/memos`, id), (docSnap) => {
           const data = docSnap.data();
-          console.log(docSnap.id, data.bodyText);
           setMemo({
             id: docSnap.id,
             bodyText: data.bodyText,
@@ -33,8 +31,8 @@ export default function MemoDetailScreen(props) {
           });
         });
       } catch (error) {
-        console.log(error);
-        Alert.alert('Error!', error);
+        const errorMsg = translateErrors(error.code);
+        Alert.alert(errorMsg.title, errorMsg.description);
       }
     }
     return unsubscribe;

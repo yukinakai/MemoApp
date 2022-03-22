@@ -12,6 +12,7 @@ import CircleButton from '../components/CircleButton';
 import LogOutButton from '../components/LogOutButton';
 import Button from '../components/Button';
 import Loading from '../components/Loading';
+import { translateErrors } from '../utils';
 
 export default function MemoListScreen(props) {
   const { navigation } = props;
@@ -48,9 +49,9 @@ export default function MemoListScreen(props) {
           setLoading(false);
         });
       } catch (error) {
-        console.log(error);
         setLoading(false);
-        Alert.alert('Error!', error);
+        const errorMsg = translateErrors(error.code);
+        Alert.alert(errorMsg.title, errorMsg.description);
       }
     }
     return unsubscribe;

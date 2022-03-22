@@ -30,7 +30,6 @@ export default function MemoEditScreen(props) {
         })
         .catch((error) => {
           const errorMsg = translateErrors(error.code);
-          console.log(error);
           Alert.alert(errorMsg.title, errorMsg.description);
         });
     }
