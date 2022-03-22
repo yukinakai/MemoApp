@@ -6,7 +6,7 @@ import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from 'firebas
 
 import Button from '../components/Button';
 import Loading from '../components/Loading';
-import { translateErrors} from '../utils';
+import { translateErrors } from '../utils';
 
 export default function LoginScreen(props) {
   const { navigation } = props;
