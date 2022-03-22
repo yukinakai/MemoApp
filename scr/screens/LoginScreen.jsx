@@ -6,6 +6,7 @@ import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from 'firebas
 
 import Button from '../components/Button';
 import Loading from '../components/Loading';
+import { translateErrors} from '../utils';
 
 export default function LoginScreen(props) {
   const { navigation } = props;
@@ -41,8 +42,8 @@ export default function LoginScreen(props) {
           });
         })
         .catch((error) => {
-          console.log(error.code, error.message);
-          Alert.alert(error.code);
+          const errorMsg = translateErrors(error.code);
+          Alert.alert(errorMsg.title, errorMsg.description);
         })
         .then(() => {
           setLoading(false);

@@ -9,6 +9,7 @@ import {
 } from 'firebase/firestore';
 
 import CircleButton from '../components/CircleButton';
+import { translateErrors } from '../utils';
 
 export default function MemoEditScreen(props) {
   const { navigation, route } = props;
@@ -28,8 +29,9 @@ export default function MemoEditScreen(props) {
           navigation.goBack();
         })
         .catch((error) => {
+          const errorMsg = translateErrors(error.code);
           console.log(error);
-          Alert.alert('Error!', error);
+          Alert.alert(errorMsg.title, errorMsg.description);
         });
     }
   }
