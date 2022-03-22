@@ -3,12 +3,12 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator, CardStyleInterpolators } from '@react-navigation/stack';
 import { initializeApp, getApps } from 'firebase/app';
 
-import MemoListScreen from './scr/screens/MemoListScreen';
-import MemoDetailScreen from './scr/screens/MemoDetailScreen';
-import MemoEditScreen from './scr/screens/MemoEditScreen';
-import MemoCreateScreen from './scr/screens/MemoCreateScreen';
-import LoginScreen from './scr/screens/LoginScreen';
-import SignUpScreen from './scr/screens/SignUpScreen';
+import MemoListScreen from './src/screens/MemoListScreen';
+import MemoDetailScreen from './src/screens/MemoDetailScreen';
+import MemoEditScreen from './src/screens/MemoEditScreen';
+import MemoCreateScreen from './src/screens/MemoCreateScreen';
+import LoginScreen from './src/screens/LoginScreen';
+import SignUpScreen from './src/screens/SignUpScreen';
 
 import { firebaseConfig } from './env';
 
