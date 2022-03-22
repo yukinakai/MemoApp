@@ -7,6 +7,10 @@ import { useNavigation } from '@react-navigation/native';
 import {
   shape, string, instanceOf, arrayOf,
 } from 'prop-types';
+import { getAuth } from 'firebase/auth';
+import {
+  getFirestore, doc, deleteDoc,
+} from 'firebase/firestore';
 
 import Icon from './icon';
 import { dateToString } from '../utils';
@@ -14,6 +18,27 @@ import { dateToString } from '../utils';
 export default function MemoList(props) {
   const { memos } = props;
   const navigation = useNavigation();
+
+  function deleteMemo(id) {
+    const { currentUser } = getAuth();
+    if (currentUser) {
+      const db = getFirestore();
+      const ref = doc(db, `users/${currentUser.uid}/memos`, id);
+      Alert.alert('メモを削除します', 'よろしいですか？', [
+        {
+          text: 'キャンセル',
+          onPress: () => {},
+        },
+        {
+          text: '削除する',
+          style: 'destructive',
+          onPress: async () => {
+            await deleteDoc(ref).catch(() => { Alert.alert('削除に失敗しました'); });
+          },
+        },
+      ]);
+    }
+  }
 
   function renderItem({ item }) {
     return (
@@ -27,7 +52,7 @@ export default function MemoList(props) {
         </View>
         <TouchableOpacity
           style={styles.memoDetele}
-          onPress={() => { Alert.alert('Are you sure?'); }}
+          onPress={() => { deleteMemo(item.id); }}
         >
           <Icon name="delete" size={16} color="#B0B0B0" />
           {/* <Feather name="x" size={16} color="#B0B0B0" /> */}
