@@ -1,4 +1,5 @@
 import React from 'react';
+import { LogBox } from 'react-native-web';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator, CardStyleInterpolators } from '@react-navigation/stack';
 import { initializeApp, getApps } from 'firebase/app';
@@ -19,6 +20,7 @@ if (getApps().length === 0) {
 }
 
 const Stack = createStackNavigator();
+LogBox.ignoreLogs(['AsyncStorage has been extracted']);
 
 export default function App() {
   return (
